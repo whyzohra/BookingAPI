@@ -31,3 +31,6 @@ CREATE INDEX "Booking_slotId_status_idx" ON "Booking"("slotId", "status");
 
 -- AddForeignKey
 ALTER TABLE "Booking" ADD CONSTRAINT "Booking_slotId_fkey" FOREIGN KEY ("slotId") REFERENCES "Slot"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Enforce at most ONE active (CONFIRMED) booking per slot at the database engine level
+CREATE UNIQUE INDEX "unique_active_booking_per_slot" ON "Booking"("slotId") WHERE "status" = 'CONFIRMED';
