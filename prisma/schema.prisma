@@ -1,0 +1,38 @@
+// Prisma schema file for Appointment Booking API
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+model Slot {
+  id        String    @id @default(uuid())
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime  @default(now())
+  bookings  Booking[]
+
+  @@index([startTime])
+}
+
+model Booking {
+  id           String        @id @default(uuid())
+  slotId       String
+  customerName String
+  status       BookingStatus @default(CONFIRMED)
+  createdAt    DateTime      @default(now())
+  cancelledAt  DateTime?
+
+  slot Slot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@index([slotId, status])
+}
